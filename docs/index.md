@@ -1,8 +1,8 @@
-![icon](docs/images/AIwiki.png)
+![icon](./images/AIwiki.png)
 
 > The key is not how to learn, is how to learn faster.
 
-本教程受到[CS自学指南](https://csdiy.wiki)的启发。CS自学指南是一个全面而丰富的计算机领域的自学指南，提供了一系列供人学习的计算机领域的优质课程。
+本教程受到[CS自学指南](https://csdiy.wiki)的启发。CS自学指南是一个全面而丰富的计算机领域的自学指南，提供了一系列供人学习的计算机领域的优质课程，本内容的静态网页创建也参考了其部分的配置。
 
 本指南的内容不止在于如何学习，也在于如何更好的学习。
 
