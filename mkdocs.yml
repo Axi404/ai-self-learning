@@ -45,3 +45,82 @@ extra:
   social:
     - icon: fontawesome/brands/github-alt
       link: https://github.com/Axi404
+
+plugins:
+  - i18n:
+      languages:
+        - locale: zh
+          default: true
+          name: 简体中文
+          build: true
+        - locale: en
+          name: English
+          build: true
+          site_name: csdiy.wiki
+          nav_translations:
+            前言: Foreword
+            如何使用这本书: How To Use The Book
+            一个仅供参考的CS学习规划: Guideline
+            必学工具: Productivity Toolkit
+            翻墙: GFW
+            日常学习工作流: Notes Workflow
+            实用工具箱: Useful Tools
+            毕业论文: Thesis Writing
+            信息检索: Information Retrieval
+            好书推荐: Book Recommendation
+            数学基础: Fundamental Mathematics
+            数学进阶: Advanced Mathematics
+            编程入门: Fundamental Programming
+            Python 语言: Python Language
+            Java 语言: Java Language
+            C 语言: C Language
+            C++ 语言: C++ Language
+            Rust 语言: Rust Language
+            函数式语言: Functional Programming
+            电子基础: Fundamental Electronics
+            数据结构与算法: Data Structures and Algorithms
+            软件工程: Software Engineering
+            计算机系统基础: Computer Systems Principles
+            体系结构: Computer Architecture
+            操作系统: Operating Systems
+            并行与分布式系统: Distributed Systems
+            计算机系统安全: Computer Security
+            计算机网络: Computer Networking
+            数据库系统: Database Systems
+            编译原理: Compilers
+            编程语言设计与分析: Programming Language Design and Analysis
+            NJU 软件分析: NJU Software Analysis
+            PKU 软件分析: PKU Software Analysis
+            程序语言设计: Programming Language
+            计算机图形学: Computer Graphics
+            Web开发: Web Development
+            数据科学: Data Science
+            人工智能: Artificial Intelligence
+            机器学习: Machine Learning
+            机器学习系统: Machine Learning Systems
+            智能计算系统: Intelligent Computing Systems
+            深度学习: Deep Learning
+            "国立台湾大学: 李宏毅机器学习": NTU Machine Learning
+            机器学习进阶: Advanced Machine Learning
+            进阶路线图: Roadmap
+            后记: Postscript
+  - search:
+      lang:
+        - zh
+        - en
+  - git-revision-date-localized
+  - minify:
+      minify_html: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/pkuflyingpig/cs-self-learning/
+  analytics:
+    provider: google
+    property: G-KJB4RXSKZG
+
+nav:
+  - 前言: "index.md"
+  - 知识图谱:
+      - 翻墙: "知识图谱/基础知识.md"

@@ -1,17 +1,13 @@
-# Welcome to MkDocs
+![icon](docs/images/AIwiki.png)
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+> The key is not how to learn, is how to learn faster.
 
-## Commands
+本教程受到[CS自学指南](https://csdiy.wiki)的启发。CS自学指南是一个全面而丰富的计算机领域的自学指南，提供了一系列供人学习的计算机领域的优质课程。
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+本指南的内容不止在于如何学习，也在于如何更好的学习。
 
-## Project layout
+对于<u>下划线内容</u>，意味着当你学习这些内容的时候，并未走在最短路径上，但是笔者依然给出这些介绍与选项，因为远路不是歧路，扎实的知识同样可以为读者带来提升。
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+本教程具有诸多的受众，按照面向的层级，首先是西安交通大学人工智能专业（笔者所在的大学及专业）的同学，其次扩展到有志于人工智能领域科研的本科生，最后再拓展到有志于人工智能领域科研的各界人士。在教程写作的过程中，笔者会尽可能的保证教程的泛化性，但是显然这种保证不是时刻存在的，其泛化性根据上述层级递减。
+
+感谢@Axi404在写作中为内容提供的帮助。
