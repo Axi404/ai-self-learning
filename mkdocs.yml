@@ -51,9 +51,6 @@ plugins:
       lang:
         - zh
         - en
-  - git-revision-date-localized
-  - minify:
-      minify_html: true
 
 extra:
   social:
