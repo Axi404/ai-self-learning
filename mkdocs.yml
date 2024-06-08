@@ -1,5 +1,8 @@
 site_name: AI wiki
 
+repo_name: ai-self-learning
+repo_url: https://github.com/Axi404/ai-self-learning/
+
 copyright: Copyright &copy; 2024-present <a href="https://github.com/Axi404" target="_blank" rel="noopener noreferrer">Axi404</a>
 
 theme:
@@ -67,5 +70,9 @@ extra:
 
 nav:
   - 前言: "index.md"
+  - 常识:
+      - 课题组: "常识/课题组.md"
+      - 顶刊与顶会: "常识/顶刊与顶会.md"
+      - 名词对照表: "常识/名词对照表.md"
   - 知识图谱:
       - 基础知识: "知识图谱/基础知识.md"
