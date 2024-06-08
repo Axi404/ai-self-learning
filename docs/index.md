@@ -1,4 +1,4 @@
-![icon](./images/AIwiki.png)
+# 前言
 
 > The key is not how to learn, is how to learn faster.
 
