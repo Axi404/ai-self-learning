@@ -1,3 +1,6 @@
+<img src="./images/icon.png" alt="icon" style="display: block; margin: 0 auto; zoom: 10%;">
+
+
 # 前言
 
 > The key is not how to learn, is how to learn fast.

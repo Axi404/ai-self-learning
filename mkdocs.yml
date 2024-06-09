@@ -12,7 +12,7 @@ theme:
     - 404.html
   include_search_page: false
   search_index_only: true
-
+  favicon: images/aiwiki.ico
   features:
     - header.autohide
     - navigation.tracking
