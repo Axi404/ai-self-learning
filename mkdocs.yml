@@ -60,14 +60,6 @@ markdown_extensions:
   - md_in_html
   - footnotes
 
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/pkuflyingpig/cs-self-learning/
-  analytics:
-    provider: google
-    property: G-KJB4RXSKZG
-
 nav:
   - 前言: "index.md"
   - 常识:
