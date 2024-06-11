@@ -1,4 +1,4 @@
-<img src="./images/title.png" alt="title" style="display: block; margin: 0 auto; zoom: 10%;">
+<img src="./images/title.png" alt="title" style="display: block; margin: 0 auto; zoom: 7%;">
 
 
 # 前言
