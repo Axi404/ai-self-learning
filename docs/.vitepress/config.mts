@@ -24,7 +24,8 @@ export default defineConfig({
     }, 
   }, 
   lang: 'zh-CN',
-  base: '/ai-self-learning/',
+  base: '/',
+  // base: '/ai-self-learning/',
   title: "AIDIY",
   description: "AIDIY，人工智能自学指南。",
   themeConfig: {
