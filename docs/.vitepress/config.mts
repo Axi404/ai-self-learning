@@ -39,7 +39,7 @@ export default defineConfig({
       { text: '前言', link: '/前言' },
       { text: '贡献指南', link: '/前言/贡献指南' },
       { text: '常识', link: '/常识' },
-      { text: '知识图谱', link: '/知识图谱' },
+      { text: '学习路线', link: '/学习路线' },
       { text: '科研技巧', link: '/科研技巧' },
       { text: '领域入门', link: '/领域入门' }
     ],
@@ -64,14 +64,14 @@ export default defineConfig({
         ]
       },
       {
-        text: '知识图谱',
-        link: '/知识图谱/',
+        text: '学习路线',
+        link: '/学习路线/',
         collapsed: true,
         items: [
-          { text: '基础知识', link: '/知识图谱/基础知识' },
-          { text: '基础技能', link: '/知识图谱/基础技能' },
-          { text: '机器学习', link: '/知识图谱/机器学习' },
-          { text: '深度学习', link: '/知识图谱/深度学习' },
+          { text: '基础知识', link: '/学习路线/基础知识' },
+          { text: '基础技能', link: '/学习路线/基础技能' },
+          { text: '机器学习', link: '/学习路线/机器学习' },
+          { text: '深度学习', link: '/学习路线/深度学习' },
         ]
       },
       {
