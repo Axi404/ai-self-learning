@@ -37,7 +37,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: '前言', link: '/前言' },
-      // { text: '贡献指南', link: '/前言/贡献指南' },
+      { text: '贡献指南', link: '/前言/贡献指南' },
       { text: '常识', link: '/常识' },
       { text: '知识图谱', link: '/知识图谱' },
       { text: '科研技巧', link: '/科研技巧' }
@@ -49,6 +49,7 @@ export default defineConfig({
         link: '/前言/',
         collapsed: true,
         items: [
+          { text: '贡献指南', link: '/前言/贡献指南' },
         ]
       },
       {
