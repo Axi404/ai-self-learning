@@ -40,7 +40,8 @@ export default defineConfig({
       { text: '贡献指南', link: '/前言/贡献指南' },
       { text: '常识', link: '/常识' },
       { text: '知识图谱', link: '/知识图谱' },
-      { text: '科研技巧', link: '/科研技巧' }
+      { text: '科研技巧', link: '/科研技巧' },
+      { text: '领域入门', link: '/领域入门' }
     ],
 
     sidebar: [
@@ -81,6 +82,13 @@ export default defineConfig({
           { text: '思维模式', link: '/科研技巧/思维模式' },
           { text: 'Idea选择', link: '/科研技巧/Idea选择' },
           { text: '论文阅读', link: '/科研技巧/论文阅读' },
+        ]
+      },
+      {
+        text: '领域入门',
+        link: '/领域入门/',
+        collapsed: true,
+        items: [
         ]
       },
     ],
