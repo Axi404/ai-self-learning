@@ -107,7 +107,18 @@ export default defineConfig({
               { text: '编程', link: '/学习路线/基础知识/编程' },
             ]
           },
-          { text: '基础技能', link: '/学习路线/基础技能' },
+          {
+            text: '基础技能', 
+            link: '/学习路线/基础技能/', 
+            collapsed: true,
+            items: [
+              { text: 'Markdown', link: '/学习路线/基础技能/Markdown' },
+              { text: 'Linux', link: '/学习路线/基础技能/Linux' },
+              { text: 'SSH', link: '/学习路线/基础技能/SSH' },
+              { text: '代理镜像设置', link: '/学习路线/基础技能/代理镜像设置' },
+              { text: '提问的智慧', link: '/学习路线/基础技能/提问的智慧' },
+            ]
+          },
           { text: '机器学习', link: '/学习路线/机器学习' },
           { text: '深度学习', link: '/学习路线/深度学习' },
         ]
