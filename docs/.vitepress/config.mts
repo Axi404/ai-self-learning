@@ -115,6 +115,7 @@ export default defineConfig({
               { text: 'Markdown', link: '/学习路线/基础技能/Markdown' },
               { text: 'Linux', link: '/学习路线/基础技能/Linux' },
               { text: 'SSH', link: '/学习路线/基础技能/SSH' },
+              { text: 'LaTeX', link: '/学习路线/基础技能/LaTeX' },
               { text: '代理镜像设置', link: '/学习路线/基础技能/代理镜像设置' },
               { text: '提问的智慧', link: '/学习路线/基础技能/提问的智慧' },
             ]
