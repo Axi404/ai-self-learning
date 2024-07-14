@@ -29,6 +29,34 @@ export default defineConfig({
   title: "AIDIY",
   description: "AIDIY，人工智能自学指南。",
   themeConfig: {
+    sidebarMenuLabel:'目录', 
+    returnToTopLabel:'返回顶部', 
+    lastUpdated: {
+      text: '上次更新于',
+      formatOptions: {
+        dateStyle: 'full',
+        timeStyle: 'medium'
+      },
+    },
+    footer: { 
+      message: 'Released under the MIT License.', 
+      copyright: 'Copyright © 2023-2024present AXi', 
+    }, 
+    docFooter: { 
+      prev: '上一页', 
+      next: '下一页', 
+    }, 
+    editLink: { 
+      pattern: 'https://github.com/SurviveXJTU/SurviveXJTU.github.io/edit/main/docs/:path', // 改成自己的仓库
+      text: '在GitHub编辑本页'
+    }, 
+    outline: {
+      level: 'deep', // 显示2-6级标题
+      label: '目录' // 文字显示
+    },
+    search: { 
+      provider: 'local'
+    }, 
     logo: {
       src: '/logo.svg',
       alt: 'Logo: AIDIY',
