@@ -96,7 +96,17 @@ export default defineConfig({
         link: '/学习路线/',
         collapsed: true,
         items: [
-          { text: '基础知识', link: '/学习路线/基础知识' },
+          {
+            text: '基础知识',
+            link: '/学习路线/基础知识/',
+            collapsed: true,
+            items: [
+              { text: '线性代数', link: '/学习路线/基础知识/线性代数' },
+              { text: '概率论', link: '/学习路线/基础知识/概率论' },
+              { text: 'ChatGPT', link: '/学习路线/基础知识/ChatGPT' },
+              { text: '编程', link: '/学习路线/基础知识/编程' },
+            ]
+          },
           { text: '基础技能', link: '/学习路线/基础技能' },
           { text: '机器学习', link: '/学习路线/机器学习' },
           { text: '深度学习', link: '/学习路线/深度学习' },
