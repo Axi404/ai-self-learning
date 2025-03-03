@@ -2,8 +2,8 @@
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
-import giscusTalk from 'vitepress-plugin-comment-with-giscus';
-import { useData, useRoute } from 'vitepress';
+import { useData, useRoute, useRouter } from 'vitepress';
+import { init } from '@waline/client';
 
 import { 
   NolebaseEnhancedReadabilitiesMenu, 
@@ -12,42 +12,53 @@ import {
 } from '@nolebase/vitepress-plugin-enhanced-readabilities/client'
 
 import '@nolebase/vitepress-plugin-enhanced-readabilities/client/style.css'
+import { inBrowser } from 'vitepress'
+import '@waline/client/style'; // 导入 Waline 的默认样式
 
 import './style.css'
 
 export default {
   extends: DefaultTheme,
   setup() {
-    // Get frontmatter and route
     const { frontmatter } = useData();
     const route = useRoute();
-        
-    // giscus配置
-    giscusTalk({
-      repo: 'Axi404/ai-self-learning', //仓库
-      repoId: 'R_kgDOMGuZsQ', //仓库ID
-      category: 'Announcements', // 讨论分类
-      categoryId: 'DIC_kwDOMGuZsc4CgjtA', //讨论分类ID
-      mapping: 'pathname',
-      inputPosition: 'bottom',
-      lang: 'zh-CN',
-      }, 
-      {
-        frontmatter, route
-      },
-      //默认值为true，表示已启用，此参数可以忽略；
-      //如果为false，则表示未启用
-      //您可以使用“comment:true”序言在页面上单独启用它
-      true
-    );
+    const router = useRouter();
+    if (inBrowser) {
+      // 延迟初始化 Waline，确保页面内容先加载
+      setTimeout(() => {
+        init({
+          el: '#waline',
+          serverURL: 'https://waline.aidiy.icu',
+          path: route.path,
+          reaction: [],
+          comment: true,
+          pageview: true,
+          lang: 'zh-CN',
+        });
+      }, 500);
+      router.onAfterRouteChanged = () => {
+        init({
+          el: '#waline',
+          serverURL: 'https://waline.aidiy.icu',
+          path: route.path,
+          reaction: [],
+          comment: true,
+          pageview: true,
+          lang: 'zh-CN',
+        });
+      };
+    }
   },
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
-      // https://vitepress.dev/guide/extending-default-theme#layout-slots
       'nav-bar-content-after': () => h(NolebaseEnhancedReadabilitiesMenu), 
       // 为较窄的屏幕（通常是小于 iPad Mini）添加阅读增强菜单
-      'nav-screen-content-after': () => h(NolebaseEnhancedReadabilitiesScreenMenu)
-    })
+      'nav-screen-content-after': () => h(NolebaseEnhancedReadabilitiesScreenMenu),
+      'doc-after': () => h('div', { 
+        id: 'waline',
+        style: 'max-width: 800px; margin: 0 auto; padding: 20px;' // 限制宽度和添加内边距
+      })
+    });
   },
   enhanceApp({ app, router, siteData }) {
     app.use(NolebaseEnhancedReadabilitiesPlugin, {
