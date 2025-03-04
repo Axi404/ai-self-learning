@@ -1,0 +1,67 @@
+---
+title: 撰写文档
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import { FileTree } from '@astrojs/starlight/components';
+
+:::note[提示]
+本文档在撰写之初，使用的框架为 Vitepress 而非现在使用的 Astro，因此可能导致部分内容稍微不符合，若影响正常阅读，请在 Issue 中留言。
+:::
+
+本部分将讲解详细的文档撰写流程，其中包括的前置技能有 <u>Git 的使用</u>以及 <u>Markdown 的撰写</u>。相关技能的初步了解可以前往 [廖雪峰的 Git 教程](https://www.liaoxuefeng.com/wiki/896043488029600) 以及 [Markdown 官方教程](https://markdown.com.cn/basic-syntax/) 进行学习。
+
+### 撰写文档
+
+在了解了文件结构之后便可以开始撰写文档了，确认自己想要撰写的文档所隶属于的类别，并进入该文件夹，新建一个 Markdown 文档，按照 Markdown 文档的语法进行撰写。
+
+与此同时值得注意的是，Astro 支持部分的 Markdown 拓展语法，这些内容可以在 [官方文档](https://docs.astro.build/zh-cn/getting-started/) 中查阅。
+
+### Astro 配置
+
+详细的 Astro 配置请参考 [Astro 官方文档](https://docs.astro.build/zh-cn/getting-started/)，这里只介绍 Astro 配置的必要内容。
+
+当读者想要重新新建一个文档的时候，直接在 docs 文件夹下对应的文件夹中创建新的文件即可，使用 `.md` 或者 `.mdx` 的后缀名，其中 `.mdx` 可以支持使用 JS 等语法。
+
+在创建了新的文档之后，视需求，需要在左侧的侧边栏中添加相应的链接，而这需要在 `astro.config.mjs` 文件中进行配置，以下是一个示例：
+
+```ts {"1":5} ins={"2":6-9} ins={"3":16-18} {"4":20-23} 
+export default defineConfig({
+	integrations: [
+		starlight({
+			...,
+			sidebar: [
+				{
+					label: '关于我们',
+					slug: '关于我们',
+				},
+				{
+					label: '贡献指南',
+					slug: '贡献指南',
+				},
+				{
+					label: 'Guides',
+					items: [
+						{ label: 'Example Guide', slug: 'guides/example' },
+					],
+				},
+				{
+					label: 'Reference',
+					autogenerate: { directory: 'reference' },
+				},
+			],
+		}),
+	],
+});
+```
+
+<Steps>
+1. 在 `integrations` 中找到 `starlight` 集成，并找到 `sidebar` 侧边栏。
+2. 假如说想要添加一则新文档 `关于我们.mdx`，使用 `label` 添加到侧边栏标题，并在 `slug` 中填写路径即可，可以省略后缀名。
+3. 假如说在某一目录下添加一则新文档 `guides/example.mdx`，且在侧边栏中显示在 `Guides` 下面，则需要使用 `items` 字段，并在其中添加一个新的对象，规则不变。
+4. 对于目录 `reference`，可以注意到其中包含了 `autogenerate` 字段，该字段可以自动生成目录，从而不需要手动添加。
+</Steps>
+
+### 更多语法
+
+相较于传统的 Markdown 语法，Astro 的 Starlight 主题支持更多的语法，这些语法的本质上是使用 JS 语法实现的，因此可以在 `.mdx` 中进行调用。详细的说明见 [Astro 官方文档](https://docs.astro.build/) 以及 [Starlight 官方文档](https://starlight.astro.build/)。
