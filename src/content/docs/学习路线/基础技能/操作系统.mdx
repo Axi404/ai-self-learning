@@ -19,9 +19,18 @@ title: Linux
 - `mkdir`：创建文件夹
 - `cat`：查看文件内容
 
+值得一提的是，大多数的 LLM 都是命令行使用的高手，读者任何相关的问题均可以从 LLM 处获得较为标准或满意的答案。
+
 ### 安装包
 
 在 Ubuntu 以及大多数的 Linux 发行版中，使用 `apt` 来安装包，而在一些发行版中，如 Arch Linux，则使用 `pacman` 来安装包。一般来说，比如 C++ 或者 Python 等，均可以便捷地使用包管理工具来进行安装。
+
+一般来说，在自己的服务器上，你可以直接具有管理员的权限，可以根据你的密码，运行 `sudo` 指令，即 `substitute user do`，可以以管理员权限进行操作。运行以下代码：
+
+```bash
+sudo apt update
+
+```
 
 ### Conda
 
@@ -41,3 +50,10 @@ conda init --all
 同时读者或许需要掌握 conda 的常见使用方式，主要为 `create` 和 `activate` 的用法，用于包管理。
 
 在此基础之上，使用 `python3 your_python_file.py` 即可运行脚本。
+
+### 📖安装你的双系统
+
+假如读者想要进一步了解 Linux，并且希望在自己的电脑上安装 Linux 双系统，这里有一些教程可供参考：
+
+- **Linux101**：中国科学技术大学 Linux 用户协会关于 Linux 的[在线讲义](https://101.lug.ustc.edu.cn/)。
+- **Blog**：Axi404 关于如何安装 Ubuntu 双系统的[文章](https://axi404.top/blog/rm-tutorial-section-3)（实为 Robomaster 比赛的培训文档，其中讲述了 Ubuntu 双系统的安装）。
