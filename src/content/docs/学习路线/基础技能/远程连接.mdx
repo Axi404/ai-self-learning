@@ -1,0 +1,210 @@
+---
+title: SSH
+---
+
+import {Aside} from "@astrojs/starlight/components"
+
+<Aside type="note" title="操作系统">本教程中相关指令都在 Ubuntu 系统下进行，而 SSH 相关指令可以在 Windows 系统下通用。</Aside>
+
+## SSH
+
+SSH（Secure Shell）是一种加密网络协议，用于在不安全的网络上安全地执行网络服务。SSH最常见的用途是远程登录系统和执行命令，但它也支持隧道、转发TCP端口和X11连接，以及在两台主机之间传输文件。
+
+### SSH 常规指令与参数
+
+**基本连接命令**：
+```bash
+ssh username@hostname
+```
+
+**指定端口连接**：
+```bash
+ssh username@hostname -p 端口号
+```
+
+**常用参数**：
+- `-p`：指定端口号，默认为22
+- `-i`：指定私钥文件路径
+- `-L`：本地端口转发
+- `-R`：远程端口转发
+
+端口转发常常用于建立本地与服务器的通信，例如查看在服务器挂在的 tensorboard 等。`-L` 和 `-R` 的参数格式为 `本地端口:服务器IP:服务器端口`。
+
+**远程执行命令**：
+```bash
+ssh username@hostname "command"
+```
+
+### SSH 心跳机制
+
+SSH连接在长时间无数据传输时会自动断开，这是由于网络设备（如防火墙、路由器）通常会关闭长时间空闲的连接以节省资源。为了保持连接活跃，SSH使用"心跳"机制定期发送信号。心跳机制是 SSH 的默认行为，尽管可以关闭，但是在这里不建议关闭，如果需要修改，可以参照以下内容：
+
+**心跳配置方法**：
+- 客户端配置：在 `~/.ssh/config` 中添加
+  ```
+  Host *
+      ServerAliveInterval 60  # 每60秒发送一次心跳
+      ServerAliveCountMax 3   # 允许3次心跳失败
+  ```
+- 服务器配置：在 `/etc/ssh/sshd_config` 中设置
+  ```
+  ClientAliveInterval 60  # 每60秒检查一次客户端状态
+  ClientAliveCountMax 3   # 允许3次检查失败
+  ```
+
+<Aside type="caution" title="注意事项">
+不建议直接在SSH会话中运行长时间任务。如果SSH连接中断，正在运行的任务也会被终止。对于长时间任务，请考虑：
+1. 使用 `nohup` 或 `screen`/`tmux` 等工具将任务置于后台运行
+2. 使用作业调度系统（如Slurm）提交任务
+
+tmux 的详细用法将在后续章节中介绍。
+</Aside>
+
+### SSH 密钥与 Config
+
+**生成SSH密钥**：
+```bash
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com" # 生成 RSA 密钥对
+ssh-keygen -t ed25519 -C "your_email@example.com" # 生成 Ed25519 密钥对
+```
+
+其中 `-C` 参数可以添加一个注释，方便后续管理，这并非任何的邮箱认证系统。
+
+**将公钥复制到服务器**：
+```bash
+ssh-copy-id username@hostname
+```
+或手动添加公钥内容至服务器的`~/.ssh/authorized_keys`文件。
+
+**SSH配置文件**：
+在`~/.ssh/config`文件中可以设置SSH连接的默认参数，简化连接过程：
+
+```
+Host 别名
+    HostName 主机名或IP
+    User 用户名
+    Port 端口号
+    IdentityFile ~/.ssh/私钥文件名
+    ForwardAgent yes
+```
+
+使用配置文件后，可以直接使用`ssh 别名`进行连接。
+
+**SSH代理**：
+```bash
+eval "$(ssh-agent -s)"  # 启动ssh-agent
+ssh-add ~/.ssh/私钥文件名  # 添加私钥到ssh-agent
+```
+
+SSH代理（ssh-agent）是一个在后台运行的程序，用于存储已解密的私钥，使得用户不必反复输入密钥密码。
+
+代理转发的典型场景是通过"跳板机"连接到内部服务器，但需谨慎使用，避免在不信任的服务器上启用代理转发。
+
+### 文件传输
+
+- **`scp`(Secure Copy)**：基于SSH的安全文件复制工具
+  ```bash
+  # 从本地复制到远程
+  scp /path/to/local/file username@hostname:/path/to/remote/directory
+  
+  # 从远程复制到本地
+  scp username@hostname:/path/to/remote/file /path/to/local/directory
+  
+  # 复制整个目录（递归）
+  scp -r /path/to/local/directory username@hostname:/path/to/remote/directory
+  ```
+
+- **`sftp`(SSH File Transfer Protocol)**：交互式文件传输工具
+  ```bash
+  # 连接到远程主机
+  sftp username@hostname
+  
+  # SFTP命令
+  get 远程文件 [本地文件]  # 下载文件
+  put 本地文件 [远程文件]  # 上传文件
+  ls                      # 列出远程目录内容
+  cd 远程目录             # 切换远程目录
+  lcd 本地目录            # 切换本地目录
+  mkdir 目录名            # 创建远程目录
+  rm 文件名               # 删除远程文件
+  exit                    # 退出sftp
+  ```
+
+- **`rsync`**：高效的文件同步工具
+  ```bash
+  # 从本地同步到远程
+  rsync -avz /path/to/local/directory username@hostname:/path/to/remote/directory
+  
+  # 从远程同步到本地
+  rsync -avz username@hostname:/path/to/remote/directory /path/to/local/directory
+  
+  # 常用参数
+  # -a: 归档模式，保留权限、所有者等
+  # -v: 详细输出
+  # -z: 传输时压缩
+  # --delete: 删除目标目录中源目录没有的文件
+  ```
+
+## Slurm
+
+Slurm（Simple Linux Utility for Resource Management）是一种开源、高度可扩展的集群管理和作业调度系统，广泛应用于世界各地的超级计算机和计算集群。即，读者在后续科研过程中使用的大多数高性能计算集群都基于 Slurm 管理。
+
+### Slurm 常规指令
+
+**查看集群状态**：
+```bash
+sinfo                 # 显示节点和分区状态
+squeue               # 显示排队和运行中的作业
+sacct                # 显示已完成作业的信息
+scontrol show job 作业ID # 显示特定作业的详细信息
+```
+
+**提交作业**：
+```bash
+# 交互式作业
+srun --pty bash -i
+
+# 批处理作业
+sbatch 作业脚本.sh
+```
+
+**作业脚本示例**：
+```bash
+#!/bin/bash
+#SBATCH --job-name=test_job     # 作业名称
+#SBATCH --output=output_%j.log  # 标准输出文件路径（%j表示作业ID）
+#SBATCH --error=error_%j.log    # 标准错误文件
+#SBATCH --time=00-01:00:00      # 最大运行时间（DD-HH:MM:SS）
+#SBATCH --nodes=1               # 请求节点数
+#SBATCH --ntasks=4              # 请求任务（进程）数
+#SBATCH --cpus-per-task=12      # 每任务的CPU核心数
+#SBATCH --partition=gpu         # 指定分区
+#SBATCH --gres=gpu:1           # 请求GPU数量
+#SBATCH --mem=4G                # 请求内存
+
+# 运行命令
+echo "运行程序"
+python main.py
+```
+
+**作业控制**：
+```bash
+scancel 作业ID        # 取消作业
+scancel -u 用户名     # 取消指定用户的所有作业
+scontrol hold 作业ID  # 暂停作业
+scontrol release 作业ID # 释放暂停的作业
+```
+
+**查看资源使用情况**：
+```bash
+sstat --jobs=作业ID   # 显示运行中作业的资源使用状况
+```
+
+## SSH 工具
+
+- **VSCode**：VSCode 支持远程连接的插件。
+  - 安装"Remote - SSH"扩展
+  - 配置SSH连接：点击左下角绿色图标 > "Remote-SSH: Connect to Host"
+  - 可以直接在本地编辑远程文件，使用远程终端，调试远程代码
+  - 支持远程端口转发和自动同步
+  - 可以在远程服务器上安装扩展，实现完整的开发环境

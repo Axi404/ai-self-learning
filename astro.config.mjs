@@ -71,6 +71,7 @@ export default defineConfig({
 								{ label: '介绍', slug: '学习路线/基础技能/介绍' },
 								{ label: 'Markdown', slug: '学习路线/基础技能/文档' },
 								{ label: 'Linux', slug: '学习路线/基础技能/操作系统' },
+								{ label: '远程连接', slug: '学习路线/基础技能/远程连接' },
 							] 
 						},
 						{ label: '机器学习', slug: '学习路线/机器学习' },
