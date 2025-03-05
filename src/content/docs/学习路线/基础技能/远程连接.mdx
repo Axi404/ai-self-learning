@@ -6,27 +6,51 @@ import {Aside} from "@astrojs/starlight/components"
 
 <Aside type="note" title="操作系统">本教程中相关指令都在 Ubuntu 系统下进行，而 SSH 相关指令可以在 Windows 系统下通用。</Aside>
 
-## SSH
+### SSH
 
 SSH（Secure Shell）是一种加密网络协议，用于在不安全的网络上安全地执行网络服务。SSH最常见的用途是远程登录系统和执行命令，但它也支持隧道、转发TCP端口和X11连接，以及在两台主机之间传输文件。
 
-### SSH 常规指令与参数
+在AI训练工作流程中，SSH是连接到远程GPU服务器的主要工具，让你能够在本地电脑上舒适地工作，同时利用远程服务器的强大计算能力。
+
+#### SSH 常规指令与参数
 
 **基本连接命令**：
 ```bash
 ssh username@hostname
 ```
 
+这里的`hostname`可以是IP地址(如`192.168.1.100`)或域名(如`gpu-server.example.com`)。
+
 **指定端口连接**：
 ```bash
 ssh username@hostname -p 端口号
 ```
+
+大多数服务器使用默认的22端口，但出于安全考虑，系统管理员可能会更改这个端口。
 
 **常用参数**：
 - `-p`：指定端口号，默认为22
 - `-i`：指定私钥文件路径
 - `-L`：本地端口转发
 - `-R`：远程端口转发
+
+**端口转发示例**（对AI训练特别有用）：
+
+```bash
+# 本地访问远程TensorBoard
+# 将远程服务器上6006端口(TensorBoard默认端口)转发到本地16006端口
+ssh -L 16006:localhost:6006 username@hostname
+
+# 访问方式：在本地浏览器打开 http://localhost:16006
+```
+
+```bash
+# 本地访问远程Jupyter Notebook
+# 将远程服务器上8888端口转发到本地18888端口
+ssh -L 18888:localhost:8888 username@hostname
+
+# 访问方式：在本地浏览器打开 http://localhost:18888
+```
 
 端口转发常常用于建立本地与服务器的通信，例如查看在服务器挂在的 tensorboard 等。`-L` 和 `-R` 的参数格式为 `本地端口:服务器IP:服务器端口`。
 
@@ -35,7 +59,17 @@ ssh username@hostname -p 端口号
 ssh username@hostname "command"
 ```
 
-### SSH 心跳机制
+例如，快速查看远程GPU状态：
+```bash
+ssh username@hostname "nvidia-smi"
+```
+
+或者启动远程训练任务（不推荐直接这样使用，见下文心跳机制部分）：
+```bash
+ssh username@hostname "cd ~/projects/my_model && python train.py"
+```
+
+#### SSH 心跳机制
 
 SSH连接在长时间无数据传输时会自动断开，这是由于网络设备（如防火墙、路由器）通常会关闭长时间空闲的连接以节省资源。为了保持连接活跃，SSH使用"心跳"机制定期发送信号。心跳机制是 SSH 的默认行为，尽管可以关闭，但是在这里不建议关闭，如果需要修改，可以参照以下内容：
 
@@ -60,13 +94,40 @@ SSH连接在长时间无数据传输时会自动断开，这是由于网络设�
 tmux 的详细用法将在后续章节中介绍。
 </Aside>
 
-### SSH 密钥与 Config
+**后台运行简易方法**：
+
+如果你不想学习tmux但需要运行后台任务，可以使用：
+
+```bash
+# 使用nohup运行命令并将输出重定向到文件
+nohup python train.py > training.log 2>&1 &
+
+# 检查任务是否在运行
+ps aux | grep train.py
+
+# 查看训练日志
+tail -f training.log
+```
+
+#### SSH 密钥与 Config
+
+**SSH密钥认证的优势**：
+- 比密码认证更安全
+- 不需要每次都输入密码
+- 可以轻松管理多个服务器的访问权限
+- 可以撤销特定密钥而不影响其他密钥
 
 **生成SSH密钥**：
 ```bash
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com" # 生成 RSA 密钥对
 ssh-keygen -t ed25519 -C "your_email@example.com" # 生成 Ed25519 密钥对
 ```
+
+Ed25519算法比RSA提供更好的安全性和性能，建议优先使用。
+
+密钥生成过程中，系统会询问：
+1. 密钥保存位置（默认为`~/.ssh/id_rsa`或`~/.ssh/id_ed25519`）
+2. 密钥保护密码（可选）
 
 其中 `-C` 参数可以添加一个注释，方便后续管理，这并非任何的邮箱认证系统。
 
@@ -76,19 +137,45 @@ ssh-copy-id username@hostname
 ```
 或手动添加公钥内容至服务器的`~/.ssh/authorized_keys`文件。
 
+**多密钥管理**：
+如果你需要为不同的服务器使用不同的密钥，可以生成多个密钥对并在配置文件中指定。
+
 **SSH配置文件**：
 在`~/.ssh/config`文件中可以设置SSH连接的默认参数，简化连接过程：
 
 ```
+# 基本设置
 Host 别名
     HostName 主机名或IP
     User 用户名
     Port 端口号
     IdentityFile ~/.ssh/私钥文件名
+
+# 启用代理转发设置
+Host 跳板机别名
+    HostName 跳板机地址
+    User 用户名
     ForwardAgent yes
+
+# GPU服务器设置例子
+Host gpu-server
+    HostName 192.168.1.100
+    User researcher
+    Port 22
+    IdentityFile ~/.ssh/gpu_server_key
+    # 保持连接
+    ServerAliveInterval 60
+    # 压缩数据传输
+    Compression yes
+    # 自动转发X11（图形界面）
+    ForwardX11 yes
 ```
 
-使用配置文件后，可以直接使用`ssh 别名`进行连接。
+使用配置文件后，可以直接使用`ssh 别名`进行连接，例如：
+```bash
+ssh gpu-server
+```
+而不需要记住复杂的参数和地址。
 
 **SSH代理**：
 ```bash
@@ -96,60 +183,123 @@ eval "$(ssh-agent -s)"  # 启动ssh-agent
 ssh-add ~/.ssh/私钥文件名  # 添加私钥到ssh-agent
 ```
 
-SSH代理（ssh-agent）是一个在后台运行的程序，用于存储已解密的私钥，使得用户不必反复输入密钥密码。
+SSH代理（ssh-agent）是一个在后台运行的程序，用于存储已解密的私钥，使得用户不必反复输入密钥密码。主要优势包括：
+
+- **单点认证**：只需解锁私钥一次，之后的SSH连接会自动使用已解锁的密钥
+- **转发认证**：通过开启代理转发（ForwardAgent），允许在一台服务器上使用本地密钥连接到其他服务器
+- **安全性**：私钥仅在内存中解密，不会写入磁盘
 
 代理转发的典型场景是通过"跳板机"连接到内部服务器，但需谨慎使用，避免在不信任的服务器上启用代理转发。
 
-### 文件传输
+#### 文件传输
 
-- **`scp`(Secure Copy)**：基于SSH的安全文件复制工具
-  ```bash
-  # 从本地复制到远程
-  scp /path/to/local/file username@hostname:/path/to/remote/directory
-  
-  # 从远程复制到本地
-  scp username@hostname:/path/to/remote/file /path/to/local/directory
-  
-  # 复制整个目录（递归）
-  scp -r /path/to/local/directory username@hostname:/path/to/remote/directory
-  ```
+在AI训练中，经常需要在本地和远程服务器之间传输代码、数据集和训练好的模型。以下是几种实用的文件传输方法：
 
-- **`sftp`(SSH File Transfer Protocol)**：交互式文件传输工具
-  ```bash
-  # 连接到远程主机
-  sftp username@hostname
-  
-  # SFTP命令
-  get 远程文件 [本地文件]  # 下载文件
-  put 本地文件 [远程文件]  # 上传文件
-  ls                      # 列出远程目录内容
-  cd 远程目录             # 切换远程目录
-  lcd 本地目录            # 切换本地目录
-  mkdir 目录名            # 创建远程目录
-  rm 文件名               # 删除远程文件
-  exit                    # 退出sftp
-  ```
+<Aside type="tip" title="共用的 SSH Config">
+重新输入 address 以及 port 是费时费力且令人头疼的，好在不用担心，这些工具均支持从 SSH Config 中读取信息并使用别名。
+</Aside>
 
-- **`rsync`**：高效的文件同步工具
-  ```bash
-  # 从本地同步到远程
-  rsync -avz /path/to/local/directory username@hostname:/path/to/remote/directory
-  
-  # 从远程同步到本地
-  rsync -avz username@hostname:/path/to/remote/directory /path/to/local/directory
-  
-  # 常用参数
-  # -a: 归档模式，保留权限、所有者等
-  # -v: 详细输出
-  # -z: 传输时压缩
-  # --delete: 删除目标目录中源目录没有的文件
-  ```
+#### scp (Secure Copy)
 
-## Slurm
+`scp` 是基于SSH的安全文件复制工具，适合传输少量文件或小型数据集。
+
+```bash
+# 从本地复制到远程
+scp /path/to/local/file username@hostname:/path/to/remote/directory
+
+# 从远程复制到本地
+scp username@hostname:/path/to/remote/file /path/to/local/directory
+
+# 复制整个目录（递归）
+scp -r /path/to/local/directory username@hostname:/path/to/remote/directory
+
+# 压缩传输（适合低带宽网络）
+scp -C /path/to/file username@hostname:/remote/path
+
+# 指定SSH端口
+scp -P 2222 /path/to/file username@hostname:/remote/path
+```
+
+**实际训练场景示例**：
+```bash
+# 上传训练脚本到服务器
+scp -r ~/projects/gpt_model user@gpu-server:~/experiments/
+
+# 下载训练完成的模型
+scp user@gpu-server:~/experiments/gpt_model/checkpoints/model_final.pt ./models/
+```
+
+#### sftp (SSH File Transfer Protocol)
+
+`sftp` 是交互式文件传输工具，适合需要浏览远程文件系统的情况。`sftp` 是交互式的，大多数的交互指令与 Linux 的文件系统指令相同。
+
+```bash
+# 连接到远程主机
+sftp username@hostname
+
+# SFTP命令
+get 远程文件 [本地文件]  # 下载文件
+put 本地文件 [远程文件]  # 上传文件
+ls                      # 列出远程目录内容
+cd 远程目录             # 切换远程目录
+lcd 本地目录            # 切换本地目录
+mkdir 目录名            # 创建远程目录
+rm 文件名               # 删除远程文件
+exit                    # 退出sftp
+```
+
+**SFTP批处理模式**：
+可以将SFTP命令放入文件中批量执行：
+```bash
+# 创建命令文件
+echo "cd experiments
+get -r results
+put -r new_dataset
+exit" > sftp_commands.txt
+
+# 执行命令文件
+sftp -b sftp_commands.txt user@gpu-server
+```
+
+#### rsync
+
+`rsync` 是高效的文件同步工具，特别适合大型数据集和增量更新，是AI工作流程中的理想选择。
+
+```bash
+# 从本地同步到远程
+rsync -avz /path/to/local/directory username@hostname:/path/to/remote/directory
+
+# 从远程同步到本地
+rsync -avz username@hostname:/path/to/remote/directory /path/to/local/directory
+```
+
+**常用参数**：
+  - `-a`: 归档模式，保留权限、所有者等
+  - `-v`: 详细输出
+  - `-z`: 传输时压缩
+  - `-P`: 显示进度和支持断点续传
+  - `--delete`: 删除目标目录中源目录没有的文件
+  - `--exclude='*.tmp'`: 排除特定文件或目录
+
+**AI训练场景中的应用**：
+```bash
+# 同步整个项目，但排除数据集和临时文件
+rsync -avz --exclude="data/" --exclude="*.tmp" ~/projects/nlp_model/ user@gpu-server:~/experiments/nlp_model/
+
+# 仅同步新的训练数据
+rsync -avzP ~/datasets/new_data/ user@gpu-server:~/datasets/
+
+# 从服务器下载训练结果和模型，保持目录结构
+rsync -avzP user@gpu-server:~/experiments/results/ ./local_results/
+```
+
+在绝大多数场景下，`rsync` 是比 `scp` 更优的文件传输工具，因为 `rsync` 的增量传输特性，在传输大文件时可以节省大量时间。
+
+### Slurm
 
 Slurm（Simple Linux Utility for Resource Management）是一种开源、高度可扩展的集群管理和作业调度系统，广泛应用于世界各地的超级计算机和计算集群。即，读者在后续科研过程中使用的大多数高性能计算集群都基于 Slurm 管理。
 
-### Slurm 常规指令
+#### Slurm 常规指令
 
 **查看集群状态**：
 ```bash
@@ -159,33 +309,74 @@ sacct                # 显示已完成作业的信息
 scontrol show job 作业ID # 显示特定作业的详细信息
 ```
 
+**查看可用资源**：
+```bash
+# 查看所有节点状态
+sinfo -N -l
+
+# 查看特定分区（如GPU分区）的状态
+sinfo -p gpu
+```
+
 **提交作业**：
 ```bash
-# 交互式作业
-srun --pty bash -i
+# 交互式作业（获取交互式会话，适合开发和调试）
+srun --pty --partition=gpu --gres=gpu:1 bash -i
 
-# 批处理作业
+# 批处理作业（提交脚本运行，适合长时间训练）
 sbatch 作业脚本.sh
+```
+
+**常用的交互式会话示例**：
+```bash
+# 请求1个GPU，8GB内存的交互式会话
+srun --pty --partition=gpu --gres=gpu:1 --mem=8G bash -i
+
+# 请求特定型号的GPU（如Tesla V100）
+srun --pty --partition=gpu --gres=gpu:v100:1 bash -i
+
+# 请求2小时的会话时间
+srun --pty --partition=gpu --gres=gpu:1 --time=02:00:00 bash -i
 ```
 
 **作业脚本示例**：
 ```bash
 #!/bin/bash
-#SBATCH --job-name=test_job     # 作业名称
-#SBATCH --output=output_%j.log  # 标准输出文件路径（%j表示作业ID）
-#SBATCH --error=error_%j.log    # 标准错误文件
-#SBATCH --time=00-01:00:00      # 最大运行时间（DD-HH:MM:SS）
+#SBATCH --job-name=bert_train     # 作业名称
+#SBATCH --output=logs/bert_%j.log  # 标准输出文件路径（%j表示作业ID）
+#SBATCH --error=logs/bert_%j.err    # 标准错误文件
+#SBATCH --time=2-00:00:00      # 最大运行时间（2天）
 #SBATCH --nodes=1               # 请求节点数
-#SBATCH --ntasks=4              # 请求任务（进程）数
-#SBATCH --cpus-per-task=12      # 每任务的CPU核心数
+#SBATCH --ntasks=1              # 请求任务数
+#SBATCH --cpus-per-task=4      # 每任务的CPU核心数
 #SBATCH --partition=gpu         # 指定分区
-#SBATCH --gres=gpu:1           # 请求GPU数量
-#SBATCH --mem=4G                # 请求内存
+#SBATCH --gres=gpu:v100:2       # 请求2个V100 GPU
+#SBATCH --mem=32G                # 请求32GB内存
+#SBATCH --mail-type=BEGIN,END,FAIL  # 在作业开始、结束、失败时发送邮件
+#SBATCH --mail-user=your.email@example.com  # 接收通知的邮箱
 
-# 运行命令
-echo "运行程序"
-python main.py
+# 加载必要的环境模块（视集群设置而定）
+module load cuda/11.6
+module load anaconda3
+
+# 激活conda环境
+conda activate pytorch-env
+
+# 进入项目目录
+cd ~/projects/codebase/ 
+
+# 运行训练脚本
+echo "开始训练: $(date)"
+python train.py \
+    --batch_size=32 \
+    --epochs=10 \
+    --data_path=/path/to/data \
+    --output_dir=./output
+
+echo "训练结束: $(date)"
 ```
+
+这些配置信息大多数都具有默认值，读者只需要根据实际情况修改即可。
 
 **作业控制**：
 ```bash
@@ -200,7 +391,23 @@ scontrol release 作业ID # 释放暂停的作业
 sstat --jobs=作业ID   # 显示运行中作业的资源使用状况
 ```
 
-## SSH 工具
+**作业依赖**：
+```bash
+# 提交数据预处理作业
+preprocess_job=$(sbatch --parsable preprocess.sh)
+
+# 提交训练作业，依赖于预处理完成
+train_job=$(sbatch --parsable --dependency=afterok:$preprocess_job train.sh)
+
+# 提交评估作业，依赖于训练完成
+sbatch --dependency=afterok:$train_job evaluate.sh
+```
+
+不过遗憾的是，在进入大型实验室之前，读者可能更多在服务器上进行训练，而不是在上述的 Slurm 集群上。
+
+### SSH 工具
+
+选择合适的SSH客户端工具可以极大提高远程开发的效率。
 
 - **VSCode**：VSCode 支持远程连接的插件。
   - 安装"Remote - SSH"扩展
@@ -208,3 +415,11 @@ sstat --jobs=作业ID   # 显示运行中作业的资源使用状况
   - 可以直接在本地编辑远程文件，使用远程终端，调试远程代码
   - 支持远程端口转发和自动同步
   - 可以在远程服务器上安装扩展，实现完整的开发环境
+
+### 小憩
+
+阅读完了上述内容，喘口气，你又掌握了一项技能。
+
+掌握SSH和Slurm对于AI研究工作至关重要。通过这些工具，你可以高效地管理远程资源，专注于模型开发和训练，而不是被技术细节所拖累。
+
+随着你的技能提升，可以进一步探索自动化脚本、环境管理和工作流程优化，进一步提高研究效率。
