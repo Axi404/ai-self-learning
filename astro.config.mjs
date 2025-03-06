@@ -74,6 +74,7 @@ export default defineConfig({
                             items : [
                                 {label : '介绍', slug : '学习路线/基础技能/介绍'},
                                 {label : 'Markdown', slug : '学习路线/基础技能/文档'},
+                                {label : 'LaTeX', slug : '学习路线/基础技能/排版系统'},
                                 {label : 'Linux', slug : '学习路线/基础技能/操作系统'},
                                 {label : '远程连接', slug : '学习路线/基础技能/远程连接'},
                             ]

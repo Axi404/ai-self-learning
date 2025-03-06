@@ -1,0 +1,164 @@
+---
+title: LaTeX
+---
+
+### 什么是LaTeX？
+
+LaTeX（发音为/ˈlɑːtɛx/或/ˈleɪtɛx/）是一种高质量的排版系统，尤其适合于生成包含数学公式的科技文档。与常见的所见即所得文字处理软件（如Microsoft Word）不同，LaTeX采用所见即所想的方式，用户通过编写带有标记的纯文本来控制文档的结构和格式，然后由LaTeX系统将其转换为高质量的排版文档。
+
+LaTeX基于TeX排版引擎，由美国计算机科学家Donald Knuth开发，而LaTeX则是由Leslie Lamport开发的宏包集合，旨在简化TeX的使用。
+
+### 为什么我需要LaTeX？
+
+在人工智能领域，LaTeX具有不可替代的重要性：
+
+1. **学术论文撰写**：几乎所有主流的AI会议和期刊都要求使用LaTeX格式提交论文。
+2. **排版可控**：LaTeX 的排版功能十分强大，使用代码的方式控制排版，可以显著提高排版的统一风格与质量。
+2. **复杂数学公式**：AI研究中涉及大量的数学公式、概率统计和算法描述，LaTeX是表达这些内容的最佳工具。
+3. **精确引用**：LaTeX的BibTeX系统使引用管理变得简单高效，这在科研工作中至关重要。
+
+同时，LaTeX 作为纯文本文件，可以很好地使用任何编辑器进行编辑，并且具有良好的跨平台性。
+
+import {Aside} from "@astrojs/starlight/components"
+
+<Aside type="tip" title="好看的 LaTeX 文档">
+事实上，在读者使用 LaTeX 之后，很难不对其爱不释手。LaTeX 提供了极其强大的排版功能，其产出也极具美观性，可以显著与 Word 文档区分开来。
+</Aside>
+
+### LaTeX基础语法
+
+#### 文档结构
+
+一个基本的LaTeX文档结构如下：
+
+```latex
+\documentclass{article}  % 文档类型
+
+\usepackage{amsmath}     % 数学公式扩展包
+\usepackage{graphicx}    % 图像处理包
+
+\title{我的第一个LaTeX文档}
+\author{你的名字}
+\date{\today}
+
+\begin{document}
+\maketitle  % 生成标题
+
+这是我的第一个LaTeX文档。
+
+\section{引言}
+这是引言部分。
+
+\section{方法}
+这是方法部分。
+
+\subsection{算法描述}
+这是算法描述子部分。
+
+\end{document}
+```
+
+#### 常用命令和环境
+
+1. **章节命令**：
+   - `\section{标题}`：创建一级章节
+   - `\subsection{标题}`：创建二级章节
+   - `\subsubsection{标题}`：创建三级章节
+
+2. **字体格式**：
+   - `\textbf{文本}`：粗体
+   - `\textit{文本}`：斜体
+   - `\underline{文本}`：下划线
+   - `\texttt{文本}`：等宽字体（代码字体）
+
+3. **列表环境**：
+   ```latex
+   \begin{itemize}  % 无序列表
+     \item 第一项
+     \item 第二项
+   \end{itemize}
+
+   \begin{enumerate}  % 有序列表
+     \item 第一项
+     \item 第二项
+   \end{enumerate}
+   ```
+
+4. **表格环境**：
+   ```latex
+   \begin{tabular}{|c|c|c|}  % c表示居中对齐，|表示竖线
+     \hline  % 横线
+     单元格1 & 单元格2 & 单元格3 \\
+     \hline
+     数据1 & 数据2 & 数据3 \\
+     \hline
+   \end{tabular}
+   ```
+
+5. **图像插入**：
+   ```latex
+   \begin{figure}
+     \centering
+     \includegraphics[width=0.8\textwidth]{图片文件名}
+     \caption{图片说明}
+     \label{fig:示例}
+   \end{figure}
+   ```
+
+### 数学公式排版
+
+LaTeX的一大优势是对数学公式的优秀支持，这对AI研究者尤为重要。
+
+#### 行内公式与行间公式
+
+- **行内公式**：`$公式内容$` 或 `\(公式内容\)`
+- **行间公式**：`$$公式内容$$` 或 `\[公式内容\]` 或使用equation环境
+
+例如：
+
+```latex
+爱因斯坦的质能方程 $E = mc^2$ 是物理学中最著名的公式之一。
+
+牛顿第二定律可表示为：
+\[
+F = ma
+\]
+
+贝叶斯定理表述为：
+\begin{equation}
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+\end{equation}
+```
+
+#### 常用数学符号
+
+- 上标与下标：`x^2`（x的平方），`x_i`（x下标i）
+- 分数：`\frac{分子}{分母}`
+- 平方根：`\sqrt{表达式}`
+- 求和：`\sum_{i=1}^{n}`
+- 积分：`\int_{a}^{b}`
+- 极限：`\lim_{x \to \infty}`
+- 矩阵：
+  ```latex
+  \begin{bmatrix}
+    a & b \\
+    c & d
+  \end{bmatrix}
+  ```
+
+### LaTeX编辑工具
+
+1. **在线编辑器**：[Overleaf](https://www.overleaf.com/)：最流行的在线LaTeX编辑器，支持实时协作
+
+2. **本地编辑器**：TeXstudio
+
+### 学习资源
+
+1. **推荐教程**：
+   - [一份（不太）简短的LATEX 2ε介绍](https://github.com/CTeX-org/lshort-zh-cn/releases/download/v6.02/lshort-zh-cn.pdf)
+2. **在线参考**：
+   - [LaTeX数学公式参考](https://en.wikibooks.org/wiki/LaTeX/Mathematics)
+
+### 小憩
+
+LaTeX是AI研究者的必备技能，它使你能够专注于内容而非排版，同时产出专业水准的学术文档。虽然初学时可能感到陡峭的学习曲线，但掌握基础后，LaTeX将极大地提高你的科研效率。建议从简单的文档开始，逐步掌握更复杂的功能，特别是数学公式排版，这对AI领域的学术交流至关重要。
