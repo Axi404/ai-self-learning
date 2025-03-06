@@ -2,39 +2,113 @@
 title: Linux
 ---
 
-掌握使用 Linux 操作系统，是人工智能专业研究人员的基本技能之一，但是事实上，目前在该领域中，图形化的内容已经较多，而人工智能的科研需求仅为运行代码，因此并无过多的需求。
+掌握使用 Linux 操作系统，是人工智能专业研究人员的基本技能之一，但是事实上，目前在该领域中，图形化的内容已经较多，而人工智能的科研需求仅为运行代码，因此并无过多的需求。不过，熟悉 Linux 环境会让你在 AI 训练和研究工作中更加得心应手。
 
 一般来说，市面上的服务器的版本以 Ubuntu 20.04 为主，以及目前开始陆续迭代至 Ubuntu 22.04 版本，这是因为 20.04 版本的长期支持已经过期，一些常用的软件版本已经不再支持。
 
-### 基础指令
+### Linux 终端和文件系统基础
+
+#### Linux 文件系统结构
+
+Linux 文件系统采用树形结构，主要目录包括：
+
+- `/` - 根目录，所有文件和目录的起点
+- `/home` - 用户主目录，你的大部分工作通常在这里进行
+- `/usr` - 包含大多数应用程序和文件
+- `/etc` - 系统配置文件
+- `/var` - 存放经常变化的文件，如日志
+- `/tmp` - 临时文件
+
+#### 基础命令
 
 在这里给出几个比较常用的指令。
 
-- `cd`：切换目录
+- `cd [目录]`：切换目录
+  - `cd ~` 回到家目录
+  - `cd ..` 返回上一级目录
+  - `cd -` 返回上一个工作目录
 - `ls`：查看当前目录下的文件
+  - `ls -l` 显示详细信息
+  - `ls -a` 显示隐藏文件
 - `pwd`：查看当前目录
-- `cp`：复制文件
-- `mv`：移动文件
-- `rm`：删除文件
-- `mkdir`：创建文件夹
-- `cat`：查看文件内容
+- `mkdir [目录名]`：创建文件夹
+- `touch [文件名]`：创建空文件
+- `cp [源文件] [目标文件/目录]`：复制文件
+  - `cp -r` 递归复制（复制文件夹时需要）
+- `mv [源文件] [目标文件/目录]`：移动文件或重命名
+- `rm [文件名]`：删除文件
+  - `rm -r [目录名]` 递归删除目录
+  - `rm -f` 强制删除（不询问）
+  - **警告**：`rm -rf` 非常危险，尤其是与通配符 `*` 一起使用
+- `cat [文件名]`：查看文件内容
+- `less [文件名]`：分页查看大文件（按 q 退出）
+- `head [文件名]`：查看文件开头部分
+- `tail [文件名]`：查看文件结尾部分
+  - `tail -f` 持续查看文件末尾（监控日志很有用）
+
+#### 权限管理
+
+Linux 权限系统是基于用户和组的，每个文件和目录都有所有者和权限设置。
+
+- `chmod` - 更改文件权限
+  - 如：`chmod +x script.sh`（增加执行权限）
+  - 如：`chmod 755 script.sh`（设置读、写、执行权限）
+- `chown` - 更改文件所有者
+- `sudo` - 以管理员权限运行命令
+
+权限数字说明：
+- 4: 读权限
+- 2: 写权限
+- 1: 执行权限
+
+例如，755 表示：
+- 所有者有读(4)+写(2)+执行(1)权限 = 7
+- 所属组有读(4)+执行(1)权限 = 5
+- 其他用户有读(4)+执行(1)权限 = 5
+
+#### 进程管理
+
+在训练任务中，你可能需要管理长时间运行的进程：
+
+- `ps aux` - 查看所有进程
+- `top` 或 `htop` - 实时监控系统资源
+- `kill [进程ID]` - 终止进程
+- `fg` - 将后台进程调至前台
+- `bg` - 将进程放到后台运行
+- `nohup [命令] &` - 在后台运行命令，即使终端关闭也不会停止
 
 值得一提的是，大多数的 LLM 都是命令行使用的高手，读者任何相关的问题均可以从 LLM 处获得较为标准或满意的答案。
 
-### 安装包
+### 软件安装与包管理
+
+#### apt 包管理
 
 在 Ubuntu 以及大多数的 Linux 发行版中，使用 `apt` 来安装包，而在一些发行版中，如 Arch Linux，则使用 `pacman` 来安装包。一般来说，比如 C++ 或者 Python 等，均可以便捷地使用包管理工具来进行安装。
 
-一般来说，在自己的服务器上，你可以直接具有管理员的权限，可以根据你的密码，运行 `sudo` 指令，即 `substitute user do`，可以以管理员权限进行操作。运行以下代码：
+常用的 apt 命令：
 
 ```bash
+# 更新包列表
 sudo apt update
 
+# 升级已安装的包
+sudo apt upgrade
+
+# 安装软件
+sudo apt install [包名]
+
+# 卸载软件
+sudo apt remove [包名]
+
+# 搜索软件包
+apt search [关键词]
 ```
 
-### Conda
+一般来说，在自己的服务器上，你可以直接具有管理员的权限，可以根据你的密码，运行 `sudo` 指令，即 `substitute user do`，可以以管理员权限进行操作。
 
-Conda 是 Python 的包管理工具，其中 miniconda 是一个轻量级的包管理工具，一般推荐使用本版本。直接在 Ubuntu
+#### Conda 环境管理
+
+Conda 是 Python 的包管理工具，其中 miniconda 是一个轻量级的包管理工具，一般推荐使用本版本。在 AI 研究中，Conda 环境管理对于隔离不同项目的依赖非常重要。
 
 在 [miniconda 的官网](https://www.anaconda.com/docs/getting-started/miniconda/install)给出了安装的教程：
 
@@ -47,9 +121,98 @@ source ~/miniconda3/bin/activate
 conda init --all
 ```
 
-同时读者或许需要掌握 conda 的常见使用方式，主要为 `create` 和 `activate` 的用法，用于包管理。
+安装完成后，需要掌握以下常用命令：
+
+```bash
+# 创建新环境
+conda create --name myenv python=3.10
+
+# 激活环境
+conda activate myenv
+
+# 查看所有环境
+conda env list
+
+# 安装包
+conda install numpy
+
+# 或使用 pip 安装包
+pip install torch
+
+# 导出环境配置
+conda env export > environment.yml
+
+# 从配置文件创建环境
+conda env create -f environment.yml
+
+# 退出当前环境
+conda deactivate
+```
+
+在使用 Python 的过程中，使用 Conda 环境可以为不同项目创建隔离的环境，并且避免依赖冲突。
 
 在此基础之上，使用 `python3 your_python_file.py` 即可运行脚本。
+
+### AI 训练常用工具和技巧
+
+#### GPU 状态监控
+
+在训练深度学习模型时，监控 GPU 状态非常重要：
+
+```bash
+# 查看 GPU 状态
+nvidia-smi
+
+# 每 5 秒刷新一次
+watch -n 5 nvidia-smi
+```
+
+或者你可以使用 `nvitop` 来监控 GPU 状态：
+
+```bash
+pip install nvitop
+nvitop
+```
+
+别忘了在你的虚拟环境中安装，不要破坏你的主环境。
+
+### 常见问题及解决方案
+
+#### 权限问题
+
+```bash
+# 如果遇到"权限被拒绝"
+chmod +x your_script.sh
+
+# 如果需要管理员权限
+sudo your_command
+```
+
+#### 网络问题
+
+```bash
+# 检查网络连接
+ping google.com
+
+# 查看网络接口
+ifconfig 或 ip addr
+
+# 检查端口占用
+netstat -tulpn | grep <port_number>
+```
+
+#### 磁盘空间
+
+```bash
+# 查看磁盘使用情况
+df -h
+
+# 查看目录大小
+du -sh /path/to/directory
+
+# 查找大文件
+find / -type f -size +100M -exec ls -lh {} \;
+```
 
 ### 📖安装你的双系统
 
@@ -57,3 +220,20 @@ conda init --all
 
 - **Linux101**：中国科学技术大学 Linux 用户协会关于 Linux 的[在线讲义](https://101.lug.ustc.edu.cn/)。
 - **Blog**：Axi404 关于如何安装 Ubuntu 双系统的[文章](https://axi404.top/blog/rm-tutorial-section-3)（实为 Robomaster 比赛的培训文档，其中讲述了 Ubuntu 双系统的安装）。
+
+### 📖WSL（Windows Subsystem for Linux）
+
+对于 Windows 10/11 用户，WSL 是一个很好的选择，它允许你在 Windows 上运行 Linux 环境，而无需双系统：
+
+```bash
+# 在 PowerShell（管理员模式）中执行
+wsl --install
+```
+
+WSL 2 已经支持 GPU 加速，对于一些轻量级的 AI 训练任务也是足够的。
+
+### 小憩
+
+好了，喘口气，休息一下。虽然你没有必要成为 Ubuntu 大师，但是你还是学到了不少，不是吗？不用担心记不下来它们，你只需要知道，在需要的时候，你能够找到它们。
+
+Linux 对于 AI 训练和研究来说是一个重要的工具，虽然不需要成为 Linux 专家，但了解基本操作、包管理和一些实用工具会让你的工作更加高效。随着经验积累，你会逐渐熟悉这些命令和概念，它们将成为你 AI 研究工作流程中不可或缺的一部分。
