@@ -15,7 +15,7 @@ export default defineConfig({
             title : 'AIDIY',
             tableOfContents : {
                 minHeadingLevel : 2,
-                maxHeadingLevel : 4
+                maxHeadingLevel : 5
             },
             social : {
                 github : 'https://github.com/Axi404/ai-self-learning',

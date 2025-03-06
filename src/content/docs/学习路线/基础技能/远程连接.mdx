@@ -199,7 +199,7 @@ SSH代理（ssh-agent）是一个在后台运行的程序，用于存储已解�
 重新输入 address 以及 port 是费时费力且令人头疼的，好在不用担心，这些工具均支持从 SSH Config 中读取信息并使用别名。
 </Aside>
 
-#### scp (Secure Copy)
+##### scp (Secure Copy)
 
 `scp` 是基于SSH的安全文件复制工具，适合传输少量文件或小型数据集。
 
@@ -229,7 +229,7 @@ scp -r ~/projects/gpt_model user@gpu-server:~/experiments/
 scp user@gpu-server:~/experiments/gpt_model/checkpoints/model_final.pt ./models/
 ```
 
-#### sftp (SSH File Transfer Protocol)
+##### sftp (SSH File Transfer Protocol)
 
 `sftp` 是交互式文件传输工具，适合需要浏览远程文件系统的情况。`sftp` 是交互式的，大多数的交互指令与 Linux 的文件系统指令相同。
 
@@ -261,7 +261,7 @@ exit" > sftp_commands.txt
 sftp -b sftp_commands.txt user@gpu-server
 ```
 
-#### rsync
+##### rsync
 
 `rsync` 是高效的文件同步工具，特别适合大型数据集和增量更新，是AI工作流程中的理想选择。
 
